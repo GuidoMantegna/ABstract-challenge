@@ -7,10 +7,9 @@ export default async function handler(req, res) {
     const query = req.query;
     const { pokemonId } = query;
     var data = await db.getData("/");
-
     return res
-      .status(200)
-      .json(data.some((pokemon) => pokemon.id === Number(pokemonId)));
+    .status(200)
+    .json(data.some((pokemon) => pokemon.id === Number(pokemonId)));
   } else if (req.method === "DELETE") {
     try {
       const query = req.query;

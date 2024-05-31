@@ -3,30 +3,56 @@ import {
   AspectRatio,
   Image,
   Stack,
-  SimpleGrid,
-  Heading,
-  Tabs,
-  TabList,
-  TabPanels,
-  TabPanel,
   Progress,
   Text,
-  Tab,
   Badge,
   HStack,
   Checkbox,
-} from "@chakra-ui/react";
-import axios from "axios";
-import { useEffect, useState } from "react";
+} from "@chakra-ui/react"
+import axios from "axios"
+import { useEffect, useState } from "react"
+
+// export const getServerSideProps = async ({ params }) => {
+//   const { id } = params;
+//   const { data } = await handler({ method: "GET"});
+//   return {
+//     props: {
+//       catcheds: data,
+//     },
+//   };
+// }
 
 export default function PokemonData({ pokemon }) {
-  const [catched, setCatched] = useState(false);
+  const [catched, setCatched] = useState(false)
+
+  useEffect(() => {
+    // GET /api/catched?pokemonId=1
+    axios.get(`/api/catched?pokemonId=${pokemon.id}`).then((res) => {
+      const isCatched = res.data.some(
+        (pokemons) => pokemons.id === Number(pokemon.id)
+      )
+      setCatched(isCatched)
+    })
+  }, [])
+
+  const handleChange = (e) => {
+    // POST /api/catched
+    fetch(`/api/catched`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(pokemon),
+    }).then((res) => {
+      console.log(res.data)
+    })
+  }
 
   return (
     <Stack spacing="5" pb="5">
       <Stack spacing="5" position="relative">
         <Box position="absolute" right="0" zIndex="99">
-          <Checkbox>Catched</Checkbox>
+          <Checkbox onChange={handleChange} isChecked={catched}>Catched</Checkbox>
         </Box>
         <AspectRatio w="full" ratio={1}>
           <Image
@@ -68,5 +94,5 @@ export default function PokemonData({ pokemon }) {
         </Stack>
       </Stack>
     </Stack>
-  );
+  )
 }
