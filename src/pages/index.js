@@ -1,12 +1,9 @@
-
+import { useEffect, useMemo, useState } from "react"
 import Head from "next/head"
-// import { getServerSideProps } from 'next'
-// import { getStaticProps } from 'next'
 import { Inter, Island_Moments } from "next/font/google"
-import styles from "@/styles/Home.module.css"
 import axios from "axios"
 const inter = Inter({ subsets: ["latin"] })
-import { useEffect, useState } from "react"
+import { useCatchedPokemos } from "@/customHooks/useCatchedPokemos"
 import {
   Container,
   Stack,
@@ -22,23 +19,27 @@ import {
   ModalCloseButton,
   useDisclosure,
   Skeleton,
-  VStack,
+  HStack,
+  Text,
+  Checkbox,
 } from "@chakra-ui/react"
 import PokemonCard from "@/components/PokemonCard"
 import PokemonData from "@/components/PokemonData"
 
 export const getStaticProps = async () => {
-  // const data = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0`)
-  const res = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0")
-  const data = await res.json()
+  const data = await axios.get(
+    "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0"
+  )
+  const promises = data.data.results.map((result) => axios(result.url))
+  const fetched = (await Promise.all(promises)).map((res) => res.data)
   return {
     props: {
-      catchedPokemons: data,
+      pokemons: fetched,
     },
-  };
+  }
 }
 
-export default function Home({ catchedPokemons}) {
+export default function Home({ pokemons: availablePokemos }) {
   const pokemonDataModal = useDisclosure()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -47,6 +48,7 @@ export default function Home({ catchedPokemons}) {
   const [currentPage, setCurrentPage] = useState(
     "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0"
   )
+  const { catchedPokemons } = useCatchedPokemos()
 
   const getPokemons = () => {
     axios.get(currentPage).then(async ({ data }) => {
@@ -74,6 +76,13 @@ export default function Home({ catchedPokemons}) {
     pokemonDataModal.onOpen()
   }
 
+  const handleCatchedFilter = () => {
+    const catched = pokemon.filter((pokemon) =>
+      catchedPokemons.some((catched) => catched.id === pokemon.id)
+    )
+    setPokemon(catched)
+  }
+
   return (
     <>
       <Head>
@@ -84,14 +93,19 @@ export default function Home({ catchedPokemons}) {
       </Head>
       <Flex alignItems="center" minH="100vh" justifyContent="center">
         <Container maxW="container.lg">
-          <VStack spacing="5">
-            <Button>
-              <a href="/catched">Pokemones capturados ()</a>
-            </Button>
-          </VStack>
+          <HStack spacing="5" justify="center" p={5}>
+            <Text fontSize="2xl">Pokemones</Text>
+            <Checkbox onChange={handleCatchedFilter}>
+              Capturados ({catchedPokemons.length})
+            </Checkbox>
+            <Checkbox>
+              Por capturar ({pokemon.length - catchedPokemons.length})
+            </Checkbox>
+          </HStack>
           <Stack p="5" alignItems="center" spacing="5">
             <SimpleGrid spacing="5" columns={{ base: 1, md: 5 }}>
-              {pokemon.map((pokemon) => (
+              {/* {pokemon.map((pokemon) => ( */}
+              {availablePokemos.map((pokemon) => (
                 <Box
                   as="button"
                   key={pokemon.id}

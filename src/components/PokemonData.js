@@ -14,19 +14,9 @@ import {
   useToast,
 } from "@chakra-ui/react"
 
-// export const getServerSideProps = async ({ params }) => {
-//   const { id } = params;
-//   const { data } = await handler({ method: "GET"});
-//   return {
-//     props: {
-//       catcheds: data,
-//     },
-//   };
-// }
-
 export default function PokemonData({ pokemon }) {
   const toast = useToast()
-  const { isCatched, setIsCatched, catchedPokemons, isLoading } =
+  const { isCatched, setIsCatched } =
     useCatchedPokemos(pokemon)
 
   const handleChange = (e) => {
