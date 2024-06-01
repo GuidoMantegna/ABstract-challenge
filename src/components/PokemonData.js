@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import axios from "axios"
 import { useCatchedPokemos } from "@/customHooks/useCatchedPokemos"
 import {
@@ -12,12 +11,13 @@ import {
   HStack,
   Checkbox,
   useToast,
+  useColorModeValue,
 } from "@chakra-ui/react"
 
 export default function PokemonData({ pokemon }) {
   const toast = useToast()
-  const { isCatched, setIsCatched } =
-    useCatchedPokemos(pokemon)
+  const { isCatched, setIsCatched } = useCatchedPokemos(pokemon)
+  const bg = useColorModeValue("gray.100", "gray.900")
 
   const handleChange = (e) => {
     if (!isCatched) {
@@ -88,7 +88,7 @@ export default function PokemonData({ pokemon }) {
         </Stack>
       </Stack>
 
-      <Stack spacing="5" p="5" bg="gray.100" borderRadius="xl">
+      <Stack spacing="5" p="5" bg={bg} borderRadius="xl">
         <Stack>
           <Text fontSize="xs">hp</Text>
           <Progress bg="gray.300" borderRadius="full" value={80} />

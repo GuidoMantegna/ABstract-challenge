@@ -19,12 +19,11 @@ import {
   ModalCloseButton,
   useDisclosure,
   Skeleton,
-  HStack,
-  Text,
-  Checkbox,
 } from "@chakra-ui/react"
 import PokemonCard from "@/components/PokemonCard"
 import PokemonData from "@/components/PokemonData"
+import { Filters } from "@/components/Filters"
+import ColorModeSwitcher from "@/components/ThemeToggle"
 
 export const getServerSideProps = async () => {
   const data = await axios.get(
@@ -104,31 +103,14 @@ export default function Home({ pokemons }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Flex alignItems="center" minH="100vh" justifyContent="center">
-        <Container maxW="container.lg">
-          <HStack spacing="5" justify="center" p={5}>
-            <Text fontSize="2xl">Pokemones</Text>
-            <Checkbox
-              onChange={handleFilter}
-              isChecked={filter === "all"}
-              name="all"
-            >
-              All ({pokemon.length})
-            </Checkbox>
-            <Checkbox
-              onChange={handleFilter}
-              isChecked={filter === "catched"}
-              name="catched"
-            >
-              Catched ({catchedPokemons.length})
-            </Checkbox>
-            <Checkbox
-              onChange={handleFilter}
-              isChecked={filter === "free"}
-              name="free"
-            >
-              Free ({pokemon.length - catchedPokemons.length})
-            </Checkbox>
-          </HStack>
+        <ColorModeSwitcher />
+        <Container maxW="container.lg" mt={24}>
+          <Filters
+            filter={filter}
+            handleFilter={handleFilter}
+            pokemon={pokemon}
+            catchedPokemons={catchedPokemons}
+          />
           <Stack p="5" alignItems="center" spacing="5">
             <SimpleGrid spacing="5" columns={{ base: 1, md: 5 }}>
               {availablePokemos.map((pokemon) => (
