@@ -8,6 +8,7 @@ import {
   Badge,
   HStack,
   Checkbox,
+  useToast,
 } from "@chakra-ui/react"
 import axios from "axios"
 import { useEffect, useState } from "react"
@@ -24,11 +25,11 @@ import { useEffect, useState } from "react"
 
 export default function PokemonData({ pokemon }) {
   const [catched, setCatched] = useState(false)
+  const toast = useToast()
 
   useEffect(() => {
-    // GET /api/catched?pokemonId=1
-    // axios.get(`/api/catched`).then((res) => {
-    axios.get(`/api/catched?pokemonId=${pokemon.id}`).then((res) => {
+    // GET /api/catched
+    axios.get(`/api/catched`).then((res) => {
       const isCatched = res.data.some(
         (pokemons) => pokemons.id === Number(pokemon.id)
       )
@@ -37,27 +38,34 @@ export default function PokemonData({ pokemon }) {
   }, [])
 
   const handleChange = (e) => {
+    
     if (!catched) {
       // POST /api/catched
-      axios.post(`/api/catched`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(pokemon),
-      }).then((res) => {
+      const newPokemon = {
+        id: pokemon.id,
+        name: pokemon.name,
+      }
+      axios.post(`/api/catched`, newPokemon).then((res) => {
         setCatched(true)
+        toast({
+          title: "Pokemon capturado",
+          description: `${pokemon.name} ha sido capturado con éxito`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        })
       })
     } else {
-      // DELETE /api/catched
-      axios.delete(`/api/catched/${pokemon.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(pokemon),
-      }).then((res) => {
+      // DELETE /api/catched/{pokemonId}
+      axios.delete(`/api/catched/${pokemon.id}`).then((res) => {
         setCatched(false)
+        toast({
+          title: res.data,
+          description: `${pokemon.name} ha sido liberado con éxito`,
+          status: "info",
+          duration: 3000,
+          isClosable: true,
+        })
       })
     }
   }
@@ -66,7 +74,9 @@ export default function PokemonData({ pokemon }) {
     <Stack spacing="5" pb="5">
       <Stack spacing="5" position="relative">
         <Box position="absolute" right="0" zIndex="99">
-          <Checkbox onChange={handleChange} isChecked={catched}>Catched</Checkbox>
+          <Checkbox onChange={handleChange} isChecked={catched}>
+            Catched
+          </Checkbox>
         </Box>
         <AspectRatio w="full" ratio={1}>
           <Image
