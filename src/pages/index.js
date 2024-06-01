@@ -112,7 +112,7 @@ export default function Home({ pokemons }) {
             catchedPokemons={catchedPokemons}
           />
           <Stack p="5" alignItems="center" spacing="5">
-            <SimpleGrid spacing="5" columns={{ base: 1, md: 5 }}>
+            <SimpleGrid spacing="5" columns={{ base: 1, sm: 3, md: 5 }}>
               {availablePokemos.map((pokemon) => (
                 <Box
                   as="button"
@@ -139,7 +139,11 @@ export default function Home({ pokemons }) {
           </Stack>
         </Container>
       </Flex>
-      <Modal {...pokemonDataModal} motionPreset="slideInBottom">
+      <Modal
+        {...pokemonDataModal}
+        motionPreset="slideInBottom"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader textTransform="capitalize">

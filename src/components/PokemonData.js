@@ -15,7 +15,10 @@ import {
   Center,
 } from "@chakra-ui/react"
 
-export default function PokemonData({ pokemon }) {
+export default function PokemonData({
+  pokemon: { id, name, weight, height, moves, stats, types },
+  pokemon,
+}) {
   const toast = useToast()
   const { isCatched, setIsCatched } = useCatchedPokemos(pokemon)
   const bg = useColorModeValue("gray.100", "gray.900")
@@ -24,14 +27,14 @@ export default function PokemonData({ pokemon }) {
     if (!isCatched) {
       // POST /api/catched
       const newPokemon = {
-        id: pokemon.id,
-        name: pokemon.name,
+        id,
+        name,
       }
       axios.post(`/api/catched`, newPokemon).then((res) => {
         setIsCatched(true)
         toast({
           title: "Pokemon capturado",
-          description: `${pokemon.name} ha sido capturado con éxito`,
+          description: `${name} ha sido capturado con éxito`,
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -39,11 +42,11 @@ export default function PokemonData({ pokemon }) {
       })
     } else {
       // DELETE /api/catched/{pokemonId}
-      axios.delete(`/api/catched/${pokemon.id}`).then((res) => {
+      axios.delete(`/api/catched/${id}`).then((res) => {
         setIsCatched(false)
         toast({
           title: res.data,
-          description: `${pokemon.name} ha sido liberado con éxito`,
+          description: `${name} ha sido liberado con éxito`,
           status: "info",
           duration: 3000,
           isClosable: true,
@@ -64,42 +67,54 @@ export default function PokemonData({ pokemon }) {
           <AspectRatio w={{ base: "75%", xl: "full" }} ratio={1} a>
             <Image
               objectFit="contain"
+              alt={`${name} image`}
               src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png`}
             />
           </AspectRatio>
         </Center>
-        <Stack direction="row" spacing="5">
+        <Stack direction="row" spacing="5" justifyContent="space-between">
           <Stack>
             <Text fontSize="sm">Weight</Text>
-            <Text>20</Text>
+            <Text>{weight}</Text>
           </Stack>
           <Stack>
             <Text fontSize="sm">Height</Text>
-            <Text>12</Text>
+            <Text>{height}</Text>
           </Stack>
           <Stack>
             <Text fontSize="sm">Movimientos</Text>
-            <Text>109</Text>
+            <Text>{moves.length}</Text>
           </Stack>
           <Stack>
             <Text fontSize="sm">Tipos</Text>
             <HStack>
-              <Badge>Agua</Badge>
-              <Badge>Agua</Badge>
+              {types.map((type) => {
+                return (
+                  <Badge size="xs" key={type.slot}>
+                    {type.type.name}
+                  </Badge>
+                )
+              })}
             </HStack>
           </Stack>
         </Stack>
       </Stack>
 
       <Stack spacing="5" p="5" bg={bg} borderRadius="xl">
-        <Stack>
-          <Text fontSize="xs">hp</Text>
-          <Progress bg="gray.300" borderRadius="full" value={80} />
-        </Stack>
-        <Stack>
-          <Text fontSize="xs">attack</Text>
-          <Progress bg="gray.300" borderRadius="full" value={65} />
-        </Stack>
+        {stats.map((stat) => {
+          return (
+            <Stack key={stat.stat.name}>
+              <Text fontSize="xs" textTransform="capitalize">
+                {stat.stat.name}
+              </Text>
+              <Progress
+                bg="gray.300"
+                borderRadius="full"
+                value={stat.base_stat}
+              />
+            </Stack>
+          )
+        })}
       </Stack>
     </Stack>
   )
