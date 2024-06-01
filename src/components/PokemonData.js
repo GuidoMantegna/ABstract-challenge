@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { useCatchedPokemos } from "@/customHooks/useCatchedPokemos"
 import {
   Box,
   AspectRatio,
@@ -10,8 +13,6 @@ import {
   Checkbox,
   useToast,
 } from "@chakra-ui/react"
-import axios from "axios"
-import { useEffect, useState } from "react"
 
 // export const getServerSideProps = async ({ params }) => {
 //   const { id } = params;
@@ -24,29 +25,19 @@ import { useEffect, useState } from "react"
 // }
 
 export default function PokemonData({ pokemon }) {
-  const [catched, setCatched] = useState(false)
   const toast = useToast()
-
-  useEffect(() => {
-    // GET /api/catched
-    axios.get(`/api/catched`).then((res) => {
-      const isCatched = res.data.some(
-        (pokemons) => pokemons.id === Number(pokemon.id)
-      )
-      setCatched(isCatched)
-    })
-  }, [])
+  const { isCatched, setIsCatched, catchedPokemons, isLoading } =
+    useCatchedPokemos(pokemon)
 
   const handleChange = (e) => {
-    
-    if (!catched) {
+    if (!isCatched) {
       // POST /api/catched
       const newPokemon = {
         id: pokemon.id,
         name: pokemon.name,
       }
       axios.post(`/api/catched`, newPokemon).then((res) => {
-        setCatched(true)
+        setIsCatched(true)
         toast({
           title: "Pokemon capturado",
           description: `${pokemon.name} ha sido capturado con éxito`,
@@ -58,7 +49,7 @@ export default function PokemonData({ pokemon }) {
     } else {
       // DELETE /api/catched/{pokemonId}
       axios.delete(`/api/catched/${pokemon.id}`).then((res) => {
-        setCatched(false)
+        setIsCatched(false)
         toast({
           title: res.data,
           description: `${pokemon.name} ha sido liberado con éxito`,
@@ -74,7 +65,7 @@ export default function PokemonData({ pokemon }) {
     <Stack spacing="5" pb="5">
       <Stack spacing="5" position="relative">
         <Box position="absolute" right="0" zIndex="99">
-          <Checkbox onChange={handleChange} isChecked={catched}>
+          <Checkbox onChange={handleChange} isChecked={isCatched}>
             Catched
           </Checkbox>
         </Box>

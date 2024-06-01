@@ -1,5 +1,7 @@
-import Head from "next/head"
 
+import Head from "next/head"
+// import { getServerSideProps } from 'next'
+// import { getStaticProps } from 'next'
 import { Inter, Island_Moments } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import axios from "axios"
@@ -20,11 +22,23 @@ import {
   ModalCloseButton,
   useDisclosure,
   Skeleton,
+  VStack,
 } from "@chakra-ui/react"
 import PokemonCard from "@/components/PokemonCard"
 import PokemonData from "@/components/PokemonData"
 
-export default function Home() {
+export const getStaticProps = async () => {
+  // const data = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0`)
+  const res = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0")
+  const data = await res.json()
+  return {
+    props: {
+      catchedPokemons: data,
+    },
+  };
+}
+
+export default function Home({ catchedPokemons}) {
   const pokemonDataModal = useDisclosure()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -48,14 +62,6 @@ export default function Home() {
   useEffect(() => {
     setIsLoading(true)
     getPokemons()
-    // axios.get(currentPage).then(async ({ data }) => {
-    //   const promises = data.results.map((result) => axios(result.url));
-    //   const fetchedPokemon = (await Promise.all(promises)).map(
-    //     (res) => res.data
-    //   );
-    //   setPokemon((prev) => [...prev, ...fetchedPokemon]);
-    //   setIsLoading(false);
-    // });
   }, [currentPage])
 
   function handleNextPage() {
@@ -78,6 +84,11 @@ export default function Home() {
       </Head>
       <Flex alignItems="center" minH="100vh" justifyContent="center">
         <Container maxW="container.lg">
+          <VStack spacing="5">
+            <Button>
+              <a href="/catched">Pokemones capturados ()</a>
+            </Button>
+          </VStack>
           <Stack p="5" alignItems="center" spacing="5">
             <SimpleGrid spacing="5" columns={{ base: 1, md: 5 }}>
               {pokemon.map((pokemon) => (
