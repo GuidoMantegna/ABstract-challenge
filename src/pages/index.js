@@ -1,14 +1,13 @@
-import Head from "next/head";
+import Head from "next/head"
 
-import { Inter, Island_Moments } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import axios from "axios";
-const inter = Inter({ subsets: ["latin"] });
-import { useEffect, useState } from "react";
+import { Inter, Island_Moments } from "next/font/google"
+import styles from "@/styles/Home.module.css"
+import axios from "axios"
+const inter = Inter({ subsets: ["latin"] })
+import { useEffect, useState } from "react"
 import {
   Container,
   Stack,
-  Input,
   Button,
   SimpleGrid,
   Flex,
@@ -20,37 +19,53 @@ import {
   ModalContent,
   ModalCloseButton,
   useDisclosure,
-} from "@chakra-ui/react";
-import PokemonCard from "@/components/PokemonCard";
-import PokemonData from "@/components/PokemonData";
+  Skeleton,
+} from "@chakra-ui/react"
+import PokemonCard from "@/components/PokemonCard"
+import PokemonData from "@/components/PokemonData"
 
 export default function Home() {
-  const pokemonDataModal = useDisclosure();
+  const pokemonDataModal = useDisclosure()
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [pokemon, setPokemon] = useState([]);
-  const [selectedPokemon, setSelectedPokemon] = useState();
+  const [isLoading, setIsLoading] = useState(false)
+  const [pokemon, setPokemon] = useState([])
+  const [selectedPokemon, setSelectedPokemon] = useState()
   const [currentPage, setCurrentPage] = useState(
     "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0"
-  );
+  )
 
-  useEffect(() => {
-    setIsLoading(true);
+  const getPokemons = () => {
     axios.get(currentPage).then(async ({ data }) => {
-      const promises = data.results.map((result) => axios(result.url));
+      const promises = data.results.map((result) => axios(result.url))
       const fetchedPokemon = (await Promise.all(promises)).map(
         (res) => res.data
-      );
-      setPokemon((prev) => [...prev, ...fetchedPokemon]);
-      setIsLoading(false);
-    });
-  }, [currentPage]);
+      )
+      setPokemon((prev) => [...prev, ...fetchedPokemon])
+      setIsLoading(false)
+    })
+  }
 
-  function handleNextPage() {}
+  useEffect(() => {
+    setIsLoading(true)
+    getPokemons()
+    // axios.get(currentPage).then(async ({ data }) => {
+    //   const promises = data.results.map((result) => axios(result.url));
+    //   const fetchedPokemon = (await Promise.all(promises)).map(
+    //     (res) => res.data
+    //   );
+    //   setPokemon((prev) => [...prev, ...fetchedPokemon]);
+    //   setIsLoading(false);
+    // });
+  }, [currentPage])
+
+  function handleNextPage() {
+    const next = pokemon[pokemon.length - 1].id + 1
+    setCurrentPage(`https://pokeapi.co/api/v2/pokemon/?limit=20&offset=${next}`)
+  }
 
   function handleViewPokemon(pokemon) {
-    setSelectedPokemon(pokemon);
-    pokemonDataModal.onOpen();
+    setSelectedPokemon(pokemon)
+    pokemonDataModal.onOpen()
   }
 
   return (
@@ -71,7 +86,9 @@ export default function Home() {
                   key={pokemon.id}
                   onClick={() => handleViewPokemon(pokemon)}
                 >
-                  <PokemonCard pokemon={pokemon} />
+                  <Skeleton isLoaded={!isLoading}>
+                    <PokemonCard pokemon={pokemon} />
+                  </Skeleton>
                 </Box>
               ))}
             </SimpleGrid>
@@ -95,5 +112,5 @@ export default function Home() {
         </ModalContent>
       </Modal>
     </>
-  );
+  )
 }
