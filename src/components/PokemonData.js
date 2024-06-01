@@ -12,6 +12,7 @@ import {
   Checkbox,
   useToast,
   useColorModeValue,
+  Center,
 } from "@chakra-ui/react"
 
 export default function PokemonData({ pokemon }) {
@@ -59,12 +60,14 @@ export default function PokemonData({ pokemon }) {
             Catched
           </Checkbox>
         </Box>
-        <AspectRatio w="full" ratio={1}>
-          <Image
-            objectFit="contain"
-            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png`}
-          />
-        </AspectRatio>
+        <Center>
+          <AspectRatio w={{ base: "75%", xl: "full" }} ratio={1} a>
+            <Image
+              objectFit="contain"
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png`}
+            />
+          </AspectRatio>
+        </Center>
         <Stack direction="row" spacing="5">
           <Stack>
             <Text fontSize="sm">Weight</Text>

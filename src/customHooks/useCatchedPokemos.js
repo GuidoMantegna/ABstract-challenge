@@ -9,9 +9,9 @@ export const useCatchedPokemos = (pokemon) => {
 
   const getPokemons = () => {
     axios.get(`/api/catched`).then((res) => {
-      const isCatched = pokemon ? res.data.some(
-        (pokemons) => pokemons.id === Number(pokemon.id)
-      ) : false
+      const isCatched = pokemon
+        ? res.data.some((pokemons) => pokemons.id === Number(pokemon.id))
+        : false
       setIsCatched(isCatched)
       setCatchedPokemons(res.data)
       setIsLoading(false)
@@ -21,7 +21,7 @@ export const useCatchedPokemos = (pokemon) => {
   useEffect(() => {
     setIsLoading(true)
     getPokemons()
-  }, [])
+  }, [catchedPokemons])
 
   return {
     isCatched,

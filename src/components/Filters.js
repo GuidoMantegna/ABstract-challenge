@@ -1,5 +1,4 @@
 import { HStack, Checkbox, useColorModeValue } from "@chakra-ui/react"
-import ColorModeSwitcher from "@/components/ThemeToggle"
 
 export const Filters = ({ filter, handleFilter, pokemon, catchedPokemons }) => {
   const bg = useColorModeValue("white", "gray.800")

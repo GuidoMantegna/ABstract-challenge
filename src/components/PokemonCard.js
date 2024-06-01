@@ -5,7 +5,7 @@ import {
   HStack,
   Badge,
   AspectRatio,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 
 export default function PokemonCard({ pokemon }) {
   return (
@@ -19,6 +19,7 @@ export default function PokemonCard({ pokemon }) {
     >
       <AspectRatio w="full" ratio={1}>
         <Image
+          alt={`${pokemon.name} image`}
           src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png`}
         />
       </AspectRatio>
@@ -33,5 +34,5 @@ export default function PokemonCard({ pokemon }) {
         ))}
       </HStack>
     </Stack>
-  );
+  )
 }

@@ -23,7 +23,7 @@ import {
 import PokemonCard from "@/components/PokemonCard"
 import PokemonData from "@/components/PokemonData"
 import { Filters } from "@/components/Filters"
-import ColorModeSwitcher from "@/components/ThemeToggle"
+import ThemeToggler from "@/components/ThemeToggle"
 
 export const getServerSideProps = async () => {
   const data = await axios.get(
@@ -103,7 +103,7 @@ export default function Home({ pokemons }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Flex alignItems="center" minH="100vh" justifyContent="center">
-        <ColorModeSwitcher />
+        <ThemeToggler />
         <Container maxW="container.lg" mt={24}>
           <Filters
             filter={filter}
@@ -118,6 +118,8 @@ export default function Home({ pokemons }) {
                   as="button"
                   key={pokemon.id}
                   onClick={() => handleViewPokemon(pokemon)}
+                  _hover={{ transform: "scale(1.1)" }}
+                  transition="transform 0.3s"
                 >
                   <Skeleton isLoaded={!isLoading}>
                     <PokemonCard pokemon={pokemon} />
@@ -126,13 +128,18 @@ export default function Home({ pokemons }) {
               ))}
             </SimpleGrid>
 
-            <Button isLoading={false} onClick={handleNextPage}>
+            <Button
+              isLoading={isLoading}
+              onClick={handleNextPage}
+              variant="outline"
+              colorScheme="teal"
+            >
               Cargas más
             </Button>
           </Stack>
         </Container>
       </Flex>
-      <Modal {...pokemonDataModal}>
+      <Modal {...pokemonDataModal} motionPreset="slideInBottom">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader textTransform="capitalize">
