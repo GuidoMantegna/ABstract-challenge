@@ -27,6 +27,7 @@ export default function PokemonData({ pokemon }) {
 
   useEffect(() => {
     // GET /api/catched?pokemonId=1
+    // axios.get(`/api/catched`).then((res) => {
     axios.get(`/api/catched?pokemonId=${pokemon.id}`).then((res) => {
       const isCatched = res.data.some(
         (pokemons) => pokemons.id === Number(pokemon.id)
@@ -36,16 +37,29 @@ export default function PokemonData({ pokemon }) {
   }, [])
 
   const handleChange = (e) => {
-    // POST /api/catched
-    fetch(`/api/catched`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(pokemon),
-    }).then((res) => {
-      console.log(res.data)
-    })
+    if (!catched) {
+      // POST /api/catched
+      axios.post(`/api/catched`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pokemon),
+      }).then((res) => {
+        setCatched(true)
+      })
+    } else {
+      // DELETE /api/catched
+      axios.delete(`/api/catched/${pokemon.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pokemon),
+      }).then((res) => {
+        setCatched(false)
+      })
+    }
   }
 
   return (
