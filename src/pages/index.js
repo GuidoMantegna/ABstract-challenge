@@ -26,20 +26,20 @@ import {
 import PokemonCard from "@/components/PokemonCard"
 import PokemonData from "@/components/PokemonData"
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   const data = await axios.get(
     "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0"
   )
   const promises = data.data.results.map((result) => axios(result.url))
-  const fetched = (await Promise.all(promises)).map((res) => res.data)
+  const pokemons = (await Promise.all(promises)).map((res) => res.data)
   return {
     props: {
-      pokemons: fetched,
+      pokemons,
     },
   }
 }
 
-export default function Home({ pokemons: availablePokemos }) {
+export default function Home({ pokemons }) {
   const pokemonDataModal = useDisclosure()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -49,6 +49,21 @@ export default function Home({ pokemons: availablePokemos }) {
     "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0"
   )
   const { catchedPokemons } = useCatchedPokemos()
+  const [filter, setFilter] = useState("all")
+  const availablePokemos = useMemo(() => {
+    let filteredPokemons = pokemon
+    if (filter === "catched") {
+      filteredPokemons = pokemon.filter((pokemon) =>
+        catchedPokemons.some((p) => p.id === pokemon.id)
+      )
+    }
+    if (filter === "free") {
+      filteredPokemons = pokemon.filter(
+        (pokemon) => !catchedPokemons.some((p) => p.id === pokemon.id)
+      )
+    }
+    return filteredPokemons
+  }, [pokemon, filter])
 
   const getPokemons = () => {
     axios.get(currentPage).then(async ({ data }) => {
@@ -76,11 +91,8 @@ export default function Home({ pokemons: availablePokemos }) {
     pokemonDataModal.onOpen()
   }
 
-  const handleCatchedFilter = () => {
-    const catched = pokemon.filter((pokemon) =>
-      catchedPokemons.some((catched) => catched.id === pokemon.id)
-    )
-    setPokemon(catched)
+  const handleFilter = (e) => {
+    setFilter(e.target.name)
   }
 
   return (
@@ -95,16 +107,30 @@ export default function Home({ pokemons: availablePokemos }) {
         <Container maxW="container.lg">
           <HStack spacing="5" justify="center" p={5}>
             <Text fontSize="2xl">Pokemones</Text>
-            <Checkbox onChange={handleCatchedFilter}>
-              Capturados ({catchedPokemons.length})
+            <Checkbox
+              onChange={handleFilter}
+              isChecked={filter === "all"}
+              name="all"
+            >
+              All ({pokemon.length})
             </Checkbox>
-            <Checkbox>
-              Por capturar ({pokemon.length - catchedPokemons.length})
+            <Checkbox
+              onChange={handleFilter}
+              isChecked={filter === "catched"}
+              name="catched"
+            >
+              Catched ({catchedPokemons.length})
+            </Checkbox>
+            <Checkbox
+              onChange={handleFilter}
+              isChecked={filter === "free"}
+              name="free"
+            >
+              Free ({pokemon.length - catchedPokemons.length})
             </Checkbox>
           </HStack>
           <Stack p="5" alignItems="center" spacing="5">
             <SimpleGrid spacing="5" columns={{ base: 1, md: 5 }}>
-              {/* {pokemon.map((pokemon) => ( */}
               {availablePokemos.map((pokemon) => (
                 <Box
                   as="button"
