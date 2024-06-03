@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
+import { BASE_URL } from "@/util/constants"
 
 export const useCatchedPokemos = (pokemon) => {
   const [isCatched, setIsCatched] = useState(false)
@@ -8,7 +9,7 @@ export const useCatchedPokemos = (pokemon) => {
   const [error, setError] = useState(null)
 
   const getPokemons = () => {
-    axios.get(`/api/catched`).then((res) => {
+    axios.get(`${BASE_URL}/api/catched`).then((res) => {
       const isCatched = pokemon
         ? res.data.some((pokemons) => pokemons.id === Number(pokemon.id))
         : false
@@ -21,12 +22,13 @@ export const useCatchedPokemos = (pokemon) => {
   useEffect(() => {
     setIsLoading(true)
     getPokemons()
-  }, [catchedPokemons])
+  }, [])
 
   return {
     isCatched,
     setIsCatched,
     catchedPokemons,
+    setCatchedPokemons,
     isLoading,
     error,
   }
