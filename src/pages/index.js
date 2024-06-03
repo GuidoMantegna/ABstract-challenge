@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import Head from "next/head"
-import { Inter, Island_Moments } from "next/font/google"
+import { Inter } from "next/font/google"
 import axios from "axios"
 const inter = Inter({ subsets: ["latin"] })
 import { useCatchedPokemos } from "@/customHooks/useCatchedPokemos"

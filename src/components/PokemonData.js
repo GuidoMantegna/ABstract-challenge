@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useCatchedPokemos } from "@/customHooks/useCatchedPokemos"
+import { BASE_URL } from "@/util/constants"
 import {
   Box,
   AspectRatio,
@@ -30,7 +31,7 @@ export default function PokemonData({
         id,
         name,
       }
-      axios.post(`/api/catched`, newPokemon).then((res) => {
+      axios.post(`${BASE_URL}/api/catched`, newPokemon).then((res) => {
         setIsCatched(true)
         toast({
           title: "Pokemon capturado",
@@ -42,7 +43,7 @@ export default function PokemonData({
       })
     } else {
       // DELETE /api/catched/{pokemonId}
-      axios.delete(`/api/catched/${id}`).then((res) => {
+      axios.delete(`${BASE_URL}/api/catched/${id}`).then((res) => {
         setIsCatched(false)
         toast({
           title: res.data,
