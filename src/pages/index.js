@@ -102,16 +102,22 @@ export default function Home({ pokemons }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Flex alignItems="center" minH="100vh" justifyContent="center">
+      <Flex minH="100vh">
         <ThemeToggler />
+        <Filters
+          filter={filter}
+          handleFilter={handleFilter}
+          pokemon={pokemon}
+          catchedPokemons={catchedPokemons}
+        />
         <Container maxW="container.lg" mt={24}>
-          <Filters
-            filter={filter}
-            handleFilter={handleFilter}
-            pokemon={pokemon}
-            catchedPokemons={catchedPokemons}
-          />
-          <Stack p="5" alignItems="center" spacing="5">
+          <Stack
+            h="100%"
+            p="5"
+            alignItems="center"
+            spacing="5"
+            justifyContent="space-between"
+          >
             <SimpleGrid spacing="5" columns={{ base: 1, sm: 3, md: 5 }}>
               {availablePokemos.map((pokemon) => (
                 <Box
