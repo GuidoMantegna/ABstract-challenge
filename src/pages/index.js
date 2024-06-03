@@ -47,7 +47,7 @@ export default function Home({ pokemons }) {
   const [currentPage, setCurrentPage] = useState(
     "https://pokeapi.co/api/v2/pokemon/?limit=20&offset=0"
   )
-  const { catchedPokemons } = useCatchedPokemos()
+  const { catchedPokemons, setCatchedPokemons } = useCatchedPokemos()
   const [filter, setFilter] = useState("all")
   const availablePokemos = useMemo(() => {
     let filteredPokemons = pokemon
@@ -62,7 +62,7 @@ export default function Home({ pokemons }) {
       )
     }
     return filteredPokemons
-  }, [pokemon, filter])
+  }, [pokemon, filter, catchedPokemons])
 
   const getPokemons = () => {
     axios.get(currentPage).then(async ({ data }) => {
@@ -151,7 +151,12 @@ export default function Home({ pokemons }) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedPokemon && <PokemonData pokemon={selectedPokemon} />}
+            {selectedPokemon && (
+              <PokemonData
+                pokemon={selectedPokemon}
+                setCatchedPokemons={setCatchedPokemons}
+              />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

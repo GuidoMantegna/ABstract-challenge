@@ -19,6 +19,7 @@ import {
 export default function PokemonData({
   pokemon: { id, name, weight, height, moves, stats, types },
   pokemon,
+  setCatchedPokemons,
 }) {
   const toast = useToast()
   const { isCatched, setIsCatched } = useCatchedPokemos(pokemon)
@@ -33,6 +34,7 @@ export default function PokemonData({
       }
       axios.post(`${BASE_URL}/api/catched`, newPokemon).then((res) => {
         setIsCatched(true)
+        setCatchedPokemons((prev) => [...prev, newPokemon])
         toast({
           title: "Pokemon capturado",
           description: `${name} ha sido capturado con éxito`,
@@ -45,6 +47,7 @@ export default function PokemonData({
       // DELETE /api/catched/{pokemonId}
       axios.delete(`${BASE_URL}/api/catched/${id}`).then((res) => {
         setIsCatched(false)
+        setCatchedPokemons((prev) => prev.filter((p) => p.id !== id))
         toast({
           title: res.data,
           description: `${name} ha sido liberado con éxito`,
